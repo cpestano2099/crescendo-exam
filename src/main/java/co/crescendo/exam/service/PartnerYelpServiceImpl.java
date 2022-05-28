@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class PartnerYelpServiceImpl implements PartnerYelpService {
     private RestTemplateUtil restTemplateUtil;
 
     @Autowired
-    private DetectFacesGcsServiceImpl detectFacesGcsService;
+    private DetectFacesGcsService detectFacesGcsService;
 
     @Override
     public List<BusinessReview> getBusinessReview(String businessId) {
@@ -36,6 +37,15 @@ public class PartnerYelpServiceImpl implements PartnerYelpService {
         ResponseEntity<BusinessReviewResponse> response = restTemplate.exchange(yelpBasePath + "/v3/businesses/"+ businessId +"/reviews", HttpMethod.GET, request, BusinessReviewResponse.class);
 
         if(response.getBody() != null){
+            response.getBody().getReviews().forEach( review -> {
+                try {
+
+                    review.setFaceAnnotationResponse(this.detectFacesGcsService.detectFaces(review.getUser().getImageUrl(), 10));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
             return response.getBody().getReviews();
         }
 

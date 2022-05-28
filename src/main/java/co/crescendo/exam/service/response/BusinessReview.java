@@ -17,6 +17,7 @@ public class BusinessReview {
     private LocalDateTime timeCreated;
     private User user;
 
+    private FaceAnnotationResponse faceAnnotationResponse;
 
     public String getId() {
         return id;
@@ -64,5 +65,13 @@ public class BusinessReview {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public FaceAnnotationResponse getFaceAnnotationResponse() {
+        return faceAnnotationResponse;
+    }
+
+    public void setFaceAnnotationResponse(FaceAnnotationResponse faceAnnotationResponse) {
+        this.faceAnnotationResponse = faceAnnotationResponse;
     }
 }
